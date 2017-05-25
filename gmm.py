@@ -229,7 +229,7 @@ def EM(data, initial_mean ,initial_weight, initial_cov, max_iter = 1000, toleran
 # plt.show()
 
 ## socound data points : image data
-# load images
+## load images
 filename_list = []
 all_images = []
 for filename in glob.glob('E:\learn_python\clustring\week4\images/*.jpg'):
@@ -254,7 +254,8 @@ for i in range(3):
     initial_diag_cov[i,i] = np.var([x[i] for x in all_images])
 initial_cov = [initial_diag_cov]*4
 
-#run the EM algorithm on the image data using the above initialization
+##run the EM algorithm on the image data using the above initialization
+
 out = EM(all_images, initial_mean ,init_weight, initial_cov)
 print "weights:"
 print out['weights']
@@ -266,6 +267,7 @@ plt.figure()
 plt.plot(out['log_likelihood'], linewidth = 4)
 plt.xlabel('Iteration')
 plt.ylabel('log likelihood for images')
+
 #
 print out['responsibility'][0]
 
@@ -277,7 +279,7 @@ def plot_responsibilities_in_RB(img, resp, title):
     RGB_tuples = map(lambda x: colorsys.hsv_to_rgb(*x), HSV_tuples)
 
     R = [x[0] for x in img]
-    B = [x[1] for x in img]
+    B = [x[2] for x in img]
     resp_by_img_int = [[resp[n][k] for k in range(K)] for n in range(N)]
     cols = [tuple(np.dot(resp_by_img_int[n], np.array(RGB_tuples))) for n in range(N)]
 
@@ -305,14 +307,17 @@ if plot_res == 1:
     plt.show()
 
 
-def show_top_image(clus, m=5):
-    ''' show the top images in each cluster'''
+def show_top_image(res ,clus, m=5):
+    ''' show the top images with the highest responsibility taken in each cluster'''
     # get the indices that has the higher likelihood in each clusters
-    indices_top_clus = np.argsort(out['responsibility'][:,clus])[-m:][: : -1]
+    indices_top_clus = np.argsort(res[:,clus])[-m:][: : -1]
     for ind in indices_top_clus:
-        print all_images[ind]
+        print out['responsibility'][ind]
         img = Image.open(filename_list[ind])
         img.show()
 
 for clus in range(4):
-    show_top_image(clus, m=5)
+    show_top_image(out['responsibility'], clus, m=8)
+    print
+
+plt.show()
